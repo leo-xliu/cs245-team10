@@ -24,7 +24,7 @@ MAX_CONTEXT_SENTENCE_LENGTH = 1000
 MAX_CONTEXT_REFERENCES_LENGTH = 4000
 
 # Batch size you wish the evaluators will use to call the `batch_generate_answer` function
-AICROWD_SUBMISSION_BATCH_SIZE = 8 # TUNE THIS VARIABLE depending on the number of GPUs you are requesting and the size of your model.
+AICROWD_SUBMISSION_BATCH_SIZE = 40 # TUNE THIS VARIABLE depending on the number of GPUs you are requesting and the size of your model.
 
 # VLLM Parameters 
 VLLM_TENSOR_PARALLEL_SIZE = 1 # TUNE THIS VARIABLE depending on the number of GPUs you are requesting and the size of your model.
@@ -151,11 +151,11 @@ class RAGModel:
 
         if self.is_server:
             # initialize the model with vllm server
-            openai_api_key = "EMPTY"
-            openai_api_base = self.vllm_server
+            #openai_api_key = "EMPTY"
+            #openai_api_base = self.vllm_server
             self.llm_client = OpenAI(
-                api_key=openai_api_key,
-                base_url=openai_api_base,
+                api_key=os.environ.get("GROQ_API_KEY"),
+                base_url="https://api.groq.com/openai/v1",
             )
         else:
             # initialize the model with vllm offline inference
@@ -166,8 +166,7 @@ class RAGModel:
                 gpu_memory_utilization=VLLM_GPU_MEMORY_UTILIZATION,
                 trust_remote_code=True,
                 dtype="half",  # note: bfloat16 is not supported on nvidia-T4 GPUs
-                enforce_eager=True,
-                max_model_len = 8000
+                enforce_eager=True
             )
             self.tokenizer = self.llm.get_tokenizer()
 

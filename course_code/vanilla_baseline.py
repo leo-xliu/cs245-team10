@@ -10,7 +10,7 @@ from openai import OpenAI
 #### CONFIG PARAMETERS ---
 
 # Batch size you wish the evaluators will use to call the `batch_generate_answer` function
-AICROWD_SUBMISSION_BATCH_SIZE = 1 # TUNE THIS VARIABLE depending on the number of GPUs you are requesting and the size of your model.
+AICROWD_SUBMISSION_BATCH_SIZE = 200 # TUNE THIS VARIABLE depending on the number of GPUs you are requesting and the size of your model.
 
 # VLLM Parameters 
 VLLM_TENSOR_PARALLEL_SIZE = 1 # TUNE THIS VARIABLE depending on the number of GPUs you are requesting and the size of your model.
@@ -34,11 +34,11 @@ class InstructModel:
 
         if self.is_server:
             # initialize the model with vllm server
-            openai_api_key = "EMPTY"
-            openai_api_base = self.vllm_server
+            #openai_api_key = "EMPTY"
+            #openai_api_base = self.vllm_server
             self.llm_client = OpenAI(
-                api_key=openai_api_key,
-                base_url=openai_api_base,
+                api_key=os.environ.get("GROQ_API_KEY"),
+                base_url="https://api.groq.com/openai/v1",
             )
         else:
             # initialize the model with vllm offline inference
